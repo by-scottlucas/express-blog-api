@@ -21,21 +21,9 @@ class PostController {
         try {
             const { title, author, content } = req.body;
 
-            if (!title) {
+            if (!title || !author, !content) {
                 return res.status(400).json({
-                    message: "O título do post é obrigatório."
-                })
-            }
-
-            if (!author) {
-                return res.status(400).json({
-                    message: "O nome do author é obrigatório."
-                })
-            }
-
-            if (!content) {
-                return res.status(400).json({
-                    message: "O conteúdo do post é obrigatório."
+                    message: "Preencha todos os campos."
                 })
             }
 
@@ -52,7 +40,7 @@ class PostController {
     async getPost(req, res) {
         try {
             const post = await this.postService.read(req.params.id);
-            
+
             if (!post) {
                 return res.status(404).json({
                     message: "Post não encontrado"
@@ -78,14 +66,14 @@ class PostController {
                 });
             }
 
-            const upudatedFields = {};
+            const updatedFiles = {};
 
-            if (req.body.title) upudatedFields.title = req.body.title;
-            if (req.body.author) upudatedFields.author = req.body.author;
-            if (req.body.content) upudatedFields.content = req.body.content;
+            if (req.body.title) updatedFiles.title = req.body.title;
+            if (req.body.author) updatedFiles.author = req.body.author;
+            if (req.body.content) updatedFiles.content = req.body.content;
 
             const updatedPost = await this.postService.update(
-                req.params.id, upudatedFields
+                req.params.id, updatedFiles
             );
 
             res.status(201).json(updatedPost);

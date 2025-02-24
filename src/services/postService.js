@@ -1,8 +1,6 @@
 import PostModel from "../models/postModel.js"
 
 class PostService {
-    constructor() { }
-
     async list() {
         try {
             const posts = await PostModel.find();
