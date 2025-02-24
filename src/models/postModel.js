@@ -9,7 +9,9 @@ const postSchema = new mongoose.Schema({
         ]
     },
     author: {
-        type: String,
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+        required: true
     },
     content: {
         type: String,
@@ -18,6 +20,8 @@ const postSchema = new mongoose.Schema({
             "O post não pode ser publicado sem conteúdo"
         ]
     },
+}, {
+    timestamps: true,
 });
 
 const PostModel = mongoose.model('Post', postSchema);

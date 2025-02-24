@@ -1,3 +1,4 @@
+import UserModel from '../models/userModel.js';
 import PostService from '../services/postService.js';
 
 class PostController {
@@ -13,27 +14,34 @@ class PostController {
             res.status(500).json({
                 message: "Erro ao buscar os posts.",
                 error: error.message
-            })
+            });
         }
     }
 
     async createPost(req, res) {
         try {
-            const { title, author, content } = req.body;
+            const { title, content, userId } = req.body;
 
-            if (!title || !author, !content) {
+            if (!title || !content || !userId) {
                 return res.status(400).json({
                     message: "Preencha todos os campos."
-                })
+                });
             }
 
-            const newPost = await this.postService.create(req.body);
+            const user = await UserModel.findById(userId);
+            if (!user) {
+                return res.status(404).json({
+                    message: "Usuário não encontrado."
+                });
+            }
+
+            const newPost = await this.postService.create({ title, content, author: userId });
             res.status(201).json(newPost);
         } catch (error) {
             res.status(400).json({
                 message: "Erro ao criar o post.",
                 error: error.message
-            })
+            });
         }
     }
 
@@ -66,22 +74,19 @@ class PostController {
                 });
             }
 
-            const updatedFiles = {};
+            const updatedFields = {};
 
-            if (req.body.title) updatedFiles.title = req.body.title;
-            if (req.body.author) updatedFiles.author = req.body.author;
-            if (req.body.content) updatedFiles.content = req.body.content;
+            if (req.body.title) updatedFields.title = req.body.title;
+            if (req.body.content) updatedFields.content = req.body.content;
 
-            const updatedPost = await this.postService.update(
-                req.params.id, updatedFiles
-            );
+            const updatedPost = await this.postService.update(req.params.id, updatedFields);
 
             res.status(201).json(updatedPost);
         } catch (error) {
             res.status(500).json({
                 message: "Erro ao atualizar post",
                 error: error.message
-            })
+            });
         }
     }
 
@@ -101,10 +106,9 @@ class PostController {
             res.status(500).json({
                 message: "Erro ao excluir post",
                 error: error.message
-            })
+            });
         }
     }
-
 }
 
 export default PostController;

@@ -11,39 +11,27 @@ class UserController {
             res.status(200).json(users);
         } catch (error) {
             res.status(500).json({
-                message: "Erro ao buscar os usuaários.",
+                message: "Erro ao buscar os usuários.",
                 error: error.message
-            })
+            });
         }
     }
 
     async createUser(req, res) {
         try {
             const { name, email, password } = req.body;
-            if (!name, !email, !password) {
+            if (!name || !email || !password) {
                 return res.status(400).json({
                     message: "Preencha todos os campos."
-                })
+                });
             }
-            const newUser = await this.userService.create(req.body);
-            res.status(201).json(newUser);
-        } catch (error) {
-            console.log(error.message);
-        }
-    }
 
-    async createUser(req, res) {
-        try {
-            const { name, email, password } = req.body;
-            if (!name, !email, !password) {
-                return res.status(400).json({
-                    message: "Preencha todos os campos."
-                })
-            }
             const newUser = await this.userService.create(req.body);
             res.status(201).json(newUser);
         } catch (error) {
-            console.log(error.message);
+            res.status(500).json({
+                message: error.message
+            });
         }
     }
 
@@ -60,7 +48,7 @@ class UserController {
             res.status(200).json(user);
         } catch (error) {
             res.status(500).json({
-                message: "Erro ao buscar o post.",
+                message: "Erro ao buscar o usuário.",
                 error: error.message
             });
         }
@@ -86,12 +74,12 @@ class UserController {
                 req.params.id, updatedFields
             );
 
-            res.status(201).json(updatedUser);
+            res.status(200).json(updatedUser);
         } catch (error) {
             res.status(500).json({
                 message: "Erro ao atualizar usuário",
                 error: error.message
-            })
+            });
         }
     }
 
@@ -111,7 +99,7 @@ class UserController {
             res.status(500).json({
                 message: "Erro ao excluir usuário.",
                 error: error.message
-            })
+            });
         }
     }
 }

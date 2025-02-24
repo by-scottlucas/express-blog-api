@@ -1,26 +1,16 @@
 import express from 'express';
 
-import PostController from '../controllers/postController.js';
-import UserController from '../controllers/userController.js';
+import authRoutes from './authRoutes.js';
+import postRoutes from './postRoutes.js';
+import userRoutes from './userRoutes.js';
 
 const router = express.Router();
-const baseApiUrl = "/api/v1"
-const postController = new PostController();
-const userController = new UserController();
+const baseApiUrl = "/api/v1";
 
-router.get("/posts", (req, res) => postController.listPosts(req, res));
-router.post("/posts", (req, res) => postController.createPost(req, res));
-router.get("/posts/:id", (req, res) => postController.getPost(req, res));
-router.put("/posts/:id", (req, res) => postController.updatePost(req, res));
-router.delete("/posts/:id", (req, res) => postController.deletePost(req, res));
-
-router.get("/users", (req, res) => userController.listUsers(req, res));
-router.post("/users", (req, res) => userController.createUser(req, res));
-router.get("/users/:id", (req, res) => userController.getUser(req, res));
-router.put("/users/:id", (req, res) => userController.updateUser(req, res));
-router.delete("/users/:id", (req, res) => userController.deleteUser(req, res));
-
+router.use(`${baseApiUrl}/posts`, postRoutes);
+router.use(`${baseApiUrl}/users`, userRoutes);
+router.use(`${baseApiUrl}/auth`, authRoutes);
 
 export default (app) => {
-    app.use(baseApiUrl, router);
-}
+    app.use(router);
+};
