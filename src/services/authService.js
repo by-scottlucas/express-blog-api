@@ -31,7 +31,7 @@ class AuthService {
                 token,
             };
         } catch (error) {
-            throw new Error("Erro ao fazer login: " + error.message);
+            throw new Error(error.message);
         }
     }
 }

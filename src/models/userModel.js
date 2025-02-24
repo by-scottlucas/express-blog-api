@@ -3,24 +3,15 @@ import mongoose from "mongoose";
 const userSchema = new mongoose.Schema({
     name: {
         type: String,
-        required: [
-            true,
-            "O nome é obrigatório"
-        ]
+        required: [true, "O nome é obrigatório"]
     },
     email: {
         type: String,
-        required: [
-            true,
-            "O e-mail é obrigatório"
-        ]
+        required: [true, "O e-mail é obrigatório"]
     },
     password: {
         type: String,
-        required: [
-            true,
-            "A senha é obrigatória"
-        ]
+        required: [true, "A senha é obrigatória"]
     },
     posts: [{
         type: mongoose.Schema.Types.ObjectId,

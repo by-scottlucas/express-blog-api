@@ -11,8 +11,7 @@ class UserController {
             res.status(200).json(users);
         } catch (error) {
             res.status(500).json({
-                message: "Erro ao buscar os usuários.",
-                error: error.message
+                message: error.message
             });
         }
     }
@@ -48,8 +47,7 @@ class UserController {
             res.status(200).json(user);
         } catch (error) {
             res.status(500).json({
-                message: "Erro ao buscar o usuário.",
-                error: error.message
+                message: error.message
             });
         }
     }
@@ -77,8 +75,7 @@ class UserController {
             res.status(200).json(updatedUser);
         } catch (error) {
             res.status(500).json({
-                message: "Erro ao atualizar usuário",
-                error: error.message
+                message: error.message
             });
         }
     }
@@ -97,8 +94,7 @@ class UserController {
             res.status(204).json({ message: "Usuário excluído com sucesso!" });
         } catch (error) {
             res.status(500).json({
-                message: "Erro ao excluir usuário.",
-                error: error.message
+                message: error.message
             });
         }
     }

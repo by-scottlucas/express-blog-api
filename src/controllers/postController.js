@@ -12,8 +12,7 @@ class PostController {
             res.status(200).json(posts);
         } catch (error) {
             res.status(500).json({
-                message: "Erro ao buscar os posts.",
-                error: error.message
+                message: error.message
             });
         }
     }
@@ -39,8 +38,7 @@ class PostController {
             res.status(201).json(newPost);
         } catch (error) {
             res.status(400).json({
-                message: "Erro ao criar o post.",
-                error: error.message
+                message: error.message
             });
         }
     }
@@ -58,8 +56,7 @@ class PostController {
             res.status(200).json(post);
         } catch (error) {
             res.status(500).json({
-                message: "Erro ao buscar o post.",
-                error: error.message
+                message: error.message
             });
         }
     }
@@ -84,8 +81,7 @@ class PostController {
             res.status(201).json(updatedPost);
         } catch (error) {
             res.status(500).json({
-                message: "Erro ao atualizar post",
-                error: error.message
+                message: error.message
             });
         }
     }
@@ -104,8 +100,7 @@ class PostController {
             res.status(204).json({ message: "Post excluído com sucesso!" });
         } catch (error) {
             res.status(500).json({
-                message: "Erro ao excluir post",
-                error: error.message
+                message: error.message
             });
         }
     }

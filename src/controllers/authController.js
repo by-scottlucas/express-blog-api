@@ -20,7 +20,7 @@ class AuthController {
             res.status(201).json(newUser);
         } catch (error) {
             res.status(500).json({
-                message: `${error.message}`,
+                message: error.message,
             });
         }
     }
@@ -43,7 +43,7 @@ class AuthController {
             });
         } catch (error) {
             res.status(401).json({
-                message: `Erro ao realizar o login. Erro: ${error.message}`
+                message: error.message
             });
         }
     }
@@ -54,9 +54,8 @@ class AuthController {
                 message: "Logout realizado com sucesso!"
             });
         } catch (error) {
-            console.error(error.message);
             res.status(500).json({
-                message: "Erro ao fazer logout."
+                message: error.message
             });
         }
     }
