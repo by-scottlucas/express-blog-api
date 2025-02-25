@@ -3,16 +3,16 @@ import mongoose from 'mongoose';
 const postSchema = new mongoose.Schema({
     title: {
         type: String,
-        required: [true, "O título do Post é obrigatório"]
+        required: [true, "O título é obrigatório"]
     },
     author: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
-        required: true
+        required: [true, "O author é obrigatório"]
     },
     content: {
         type: String,
-        required: [true, "O post não pode ser publicado sem conteúdo"]
+        required: [true, "O conteúdo é obrigatório"]
     },
     comments: [{
         type: mongoose.Schema.Types.ObjectId,
