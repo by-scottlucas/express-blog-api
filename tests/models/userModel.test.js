@@ -1,38 +1,38 @@
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import mongoose from 'mongoose';
+
 import UserModel from '../../src/models/userModel.js';
-
-let mongoServer;
-
-beforeAll(async () => {
-    mongoServer = await MongoMemoryServer.create();
-    await mongoose.connect(mongoServer.getUri(), { useNewUrlParser: true, useUnifiedTopology: true });
-});
-
-afterAll(async () => {
-    await mongoose.connection.close();
-    await mongoServer.stop();
-});
+import UserCreateMock from '../__mocks__/userCreateMock.js';
 
 describe('User Model', () => {
+    let mongoServer;
+
+    beforeAll(async () => {
+        mongoServer = await MongoMemoryServer.create();
+        await mongoose.connect(mongoServer.getUri());
+    });
+
     beforeEach(async () => {
-        // Redefinir os dados do banco apenas quando necessário, evita chamadas excessivas
-        await UserModel.deleteMany({});
+        await mongoose.connection.db.dropDatabase();
+    });
+
+    afterAll(async () => {
+        await mongoose.connection.close();
+        await mongoServer.stop();
     });
 
     test('Deve criar um usuário válido', async () => {
-        const user = new UserModel({
-            name: 'Lucas',
-            email: 'lucas@email.com',
-            password: '123456',
-        });
-
+        const user = new UserModel(UserCreateMock);
         const savedUser = await user.save();
 
-        expect(savedUser.name).toBe('Lucas');
-        expect(savedUser.email).toBe('lucas@email.com');
-        expect(savedUser.password).toBe('123456');
         expect(savedUser).toHaveProperty('_id');
+        expect(savedUser).toHaveProperty('name');
+        expect(savedUser).toHaveProperty('email');
+        expect(savedUser).toHaveProperty('password');
+
+        expect(savedUser.name).toBe(UserCreateMock.name);
+        expect(savedUser.email).toBe(UserCreateMock.email);
+        expect(savedUser.password).toBe(UserCreateMock.password);
     });
 
     test('Deve falhar ao criar um usuário sem nome', async () => {
@@ -74,9 +74,7 @@ describe('User Model', () => {
 
     test('Deve associar posts ao usuário', async () => {
         const user = new UserModel({
-            name: 'Lucas',
-            email: 'lucas@email.com',
-            password: '123456',
+            ...UserCreateMock,
             posts: [],
         });
 
