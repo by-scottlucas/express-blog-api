@@ -5,8 +5,8 @@ import CommentModel from '../../src/models/commentModel.js';
 import PostModel from '../../src/models/postModel.js';
 import UserModel from '../../src/models/userModel.js';
 
-jest.mock('../../src/models/userModel.js', () => require('../__mocks__/user.mock.js'));
-jest.mock('../../src/models/postModel.js', () => require('../__mocks__/post.mock.js'));
+jest.mock('../../src/models/userModel.js', () => require('../__mocks__/userCreateMock.js'));
+jest.mock('../../src/models/postModel.js', () => require('../__mocks__/postCreateMock.js'));
 
 let mongoServer;
 
@@ -52,7 +52,9 @@ describe("Comment Model", () => {
             post: post._id,
         });
 
-        await expect(comment.save()).rejects.toThrowError("O comentário não pode ser publicado sem conteúdo");
+        await expect(comment.save()).rejects.toThrowError(
+            "O comentário não pode ser publicado sem conteúdo"
+        );
     });
 
     test("Deve falhar ao tentar criar um comentário sem autor", async () => {

@@ -4,7 +4,7 @@ import mongoose from 'mongoose';
 import PostModel from '../../src/models/postModel.js';
 import UserModel from '../../src/models/userModel.js';
 
-jest.mock('../../src/models/userModel.js', () => require('../__mocks__/user.mock.js'));
+jest.mock('../../src/models/userModel.js', () => require('../__mocks__/userCreateMock.js'));
 
 let mongoServer;
 

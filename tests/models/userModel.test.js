@@ -1,16 +1,12 @@
+import { MongoMemoryServer } from 'mongodb-memory-server';
 import mongoose from 'mongoose';
 import UserModel from '../../src/models/userModel.js';
-import { MongoMemoryServer } from 'mongodb-memory-server';
 
 let mongoServer;
 
 beforeAll(async () => {
     mongoServer = await MongoMemoryServer.create();
-    await mongoose.connect(mongoServer.getUri());
-});
-
-beforeEach(async () => {
-    await mongoose.connection.db.dropDatabase();
+    await mongoose.connect(mongoServer.getUri(), { useNewUrlParser: true, useUnifiedTopology: true });
 });
 
 afterAll(async () => {
@@ -19,6 +15,11 @@ afterAll(async () => {
 });
 
 describe('User Model', () => {
+    beforeEach(async () => {
+        // Redefinir os dados do banco apenas quando necessário, evita chamadas excessivas
+        await UserModel.deleteMany({});
+    });
+
     test('Deve criar um usuário válido', async () => {
         const user = new UserModel({
             name: 'Lucas',
