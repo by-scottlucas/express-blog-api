@@ -1,6 +1,7 @@
 import bcrypt from 'bcrypt';
 import dotenv from 'dotenv';
 import jwt from 'jsonwebtoken';
+import validator from 'validator';
 
 import PostModel from '../models/postModel.js';
 import UserModel from '../models/userModel.js';
@@ -19,11 +20,16 @@ class UserService {
 
     async create(data) {
         try {
+
+            if (!validator.isEmail(data.email)) {
+                throw new Error("E-mail inválido");
+            }
+
             const existingUser = await UserModel.findOne({ email: data.email });
             
             if (existingUser) {
-                throw new Error("O email já está em uso.");
-            }
+                throw new Error("Email já está em uso.");
+            }            
 
             const newUser = new UserModel(data);
             newUser.password = await bcrypt.hash(newUser.password, 10);

@@ -11,6 +11,21 @@ describe('AuthService', () => {
     let userService;
     let testUser;
 
+    const validCredentials = {
+        email: 'lucas@email.com',
+        password: 'lucas123',
+    };
+
+    const invalidEmailCredentials = {
+        email: 'joaninha@email.com',
+        password: 'lucas123',
+    };
+
+    const incorrectPasswordCredentials = {
+        email: validCredentials.email,
+        password: 'senhaErrada',
+    };
+
     beforeAll(async () => {
         mongoServer = await MongoMemoryServer.create();
         await mongoose.connect(mongoServer.getUri());
@@ -34,8 +49,7 @@ describe('AuthService', () => {
     }
 
     test('Deve realizar login com credenciais válidas', async () => {
-        const loginData = { email: 'lucas@email.com', password: 'lucas123' };
-        const response = await authService.login(loginData);
+        const response = await authService.login(validCredentials);
 
         expect(response).toHaveProperty('message');
         expect(response).toHaveProperty('user');
@@ -48,16 +62,14 @@ describe('AuthService', () => {
     });
 
     test('Deve falhar ao tentar login com email inválido', async () => {
-        await expect(authService.login({
-            email: 'joaninha@email.com',
-            password: 'lucas123'
-        })).rejects.toThrow('Usuário não encontrado.');
+        await expect(authService.login(invalidEmailCredentials))
+            .rejects
+            .toThrow('Usuário não encontrado.');
     });
 
     test('Deve falhar ao tentar login com senha incorreta', async () => {
-        await expect(authService.login({
-            email: testUser.email,
-            password: 'senhaErrada'
-        })).rejects.toThrow('Senha incorreta.');
+        await expect(authService.login(incorrectPasswordCredentials))
+            .rejects
+            .toThrow('Senha incorreta.');
     });
 });

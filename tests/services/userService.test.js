@@ -4,7 +4,7 @@ import { MongoMemoryServer } from 'mongodb-memory-server';
 import mongoose from 'mongoose';
 
 import UserService from '../../src/services/userService.js';
-import userCreateMock from '../__mocks__/userCreateMock.js';
+import UserCreateMock from '../__mocks__/userCreateMock.js';
 
 describe('User Service', () => {
     let mongoServer;
@@ -30,27 +30,27 @@ describe('User Service', () => {
     });
 
     test('Deve listar os usuários do sistema', async () => {
-        await userService.create(userCreateMock);
+        await userService.create(UserCreateMock);
         const users = await userService.list();
 
-        expect(users.length).toBeGreaterThan(0);
+        expect(users).toHaveLength(1);
         expect(users[0]).toHaveProperty('_id');
         expect(users[0]).toHaveProperty('name');
         expect(users[0]).toHaveProperty('email');
     });
 
     test('Deve criar um usuário no sistema', async () => {
-        const { user, token } = await userService.create(userCreateMock);
+        const { user, token } = await userService.create(UserCreateMock);
 
         expect(user).toMatchObject({
-            name: userCreateMock.name,
-            email: userCreateMock.email
+            name: UserCreateMock.name,
+            email: UserCreateMock.email
         });
         expect(user).toHaveProperty('_id');
         expect(user).toHaveProperty('password');
 
-        const isPasswordValid = await bcrypt.compare(userCreateMock.password, user.password);
-        expect(isPasswordValid).toBe(true);
+        const isPasswordValid = await bcrypt.compare(UserCreateMock.password, user.password);
+        expect(isPasswordValid).toBe(true); 
 
         expect(token).toBeTruthy();
         const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
@@ -58,18 +58,16 @@ describe('User Service', () => {
     });
 
     test('Deve obter um usuário pelo ID', async () => {
-        const { user } = await userService.create(userCreateMock);
+        const { user } = await userService.create(UserCreateMock);
         const foundUser = await userService.read(user._id);
 
-        expect(foundUser).toMatchObject({
-            name: userCreateMock.name,
-            email: userCreateMock.email
-        });
-        expect(foundUser).toHaveProperty('_id');
+        expect(foundUser._id.toString()).toBe(user._id.toString());
+        expect(foundUser).toHaveProperty('name', UserCreateMock.name);
+        expect(foundUser).toHaveProperty('email', UserCreateMock.email);
     });
 
     test('Deve atualizar um usuário', async () => {
-        const { user } = await userService.create(userCreateMock);
+        const { user } = await userService.create(UserCreateMock);
         const updatedData = { name: "Lucas Updated", password: "newpassword123" };
 
         const { user: updatedUser, token } = await userService.update(user._id, updatedData);
@@ -84,10 +82,9 @@ describe('User Service', () => {
     });
 
     test('Deve excluir um usuário', async () => {
-        const { user } = await userService.create(userCreateMock);
+        const { user } = await userService.create(UserCreateMock);
         const foundUser = await userService.read(user._id);
-        expect(foundUser).toHaveProperty('_id');
+        expect(foundUser._id.toString()).toBe(user._id.toString());
         await userService.delete(foundUser);
     });
-
 });
