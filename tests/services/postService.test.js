@@ -1,7 +1,8 @@
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import mongoose from 'mongoose';
-import UserService from '../../src/services/userService.js';
+
 import PostService from '../../src/services/postService.js';
+import UserService from '../../src/services/userService.js';
 import PostCreateMock from '../__mocks__/postCreateMock.js';
 import UserCreateMock from '../__mocks__/userCreateMock.js';
 
@@ -15,10 +16,11 @@ describe('PostService', () => {
         return response.user;
     };
 
-    const createPost = async (userId) => {
+    const createPost = async (userId, override = {}) => {
         return await postService.create({
             ...PostCreateMock,
-            author: userId
+            author: userId,
+            ...override
         });
     };
 
@@ -45,7 +47,7 @@ describe('PostService', () => {
 
     test('Deve listar os posts do sistema', async () => {
         const user = await createUser();
-        const post = await createPost(user._id);
+        await createPost(user._id);
     
         const posts = await postService.list();
     
@@ -57,7 +59,7 @@ describe('PostService', () => {
         expect(posts[0]).toHaveProperty('createdAt');
         expect(posts[0]).toHaveProperty('updatedAt');
     });
-    
+
     test('Deve criar um post no sistema', async () => {
         const user = await createUser();
         const post = await createPost(user._id);
@@ -69,7 +71,6 @@ describe('PostService', () => {
         expect(post).toHaveProperty('createdAt');
         expect(post).toHaveProperty('updatedAt');
     });
-    
 
     test('Deve obter um post cadastrado no sistema', async () => {
         const user = await createUser();
@@ -101,5 +102,48 @@ describe('PostService', () => {
         await postService.delete(post._id);
         
         await expect(postService.read(post._id)).rejects.toThrow('Post não encontrado.');
+    });
+
+    test('Não deve criar um post sem título', async () => {
+        const user = await createUser();
+        
+        await expect(createPost(user._id, { title: '' }))
+            .rejects.toThrow('O título é obrigatório.');
+    });
+
+    test('Não deve criar um post sem conteúdo', async () => {
+        const user = await createUser();
+        
+        await expect(createPost(user._id, { content: '' }))
+            .rejects.toThrow('O conteúdo é obrigatório.');
+    });
+
+    test('Não deve criar um post com um autor inexistente', async () => {
+        const invalidUserId = new mongoose.Types.ObjectId();
+        
+        await expect(createPost(invalidUserId))
+            .rejects.toThrow('Usuário não encontrado.');
+    });
+
+    test('Não deve encontrar um post que não existe', async () => {
+        const fakePostId = new mongoose.Types.ObjectId();
+
+        await expect(postService.read(fakePostId))
+            .rejects.toThrow('Post não encontrado.');
+    });
+
+    test('Não deve atualizar um post inexistente', async () => {
+        const fakePostId = new mongoose.Types.ObjectId();
+        const updatedData = { title: 'Updated Title', content: 'Updated Content' };
+
+        await expect(postService.update(fakePostId, updatedData))
+            .rejects.toThrow('Post não encontrado.');
+    });
+
+    test('Não deve excluir um post inexistente', async () => {
+        const fakePostId = new mongoose.Types.ObjectId();
+
+        await expect(postService.delete(fakePostId))
+            .rejects.toThrow('Post não encontrado.');
     });
 });

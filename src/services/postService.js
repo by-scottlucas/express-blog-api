@@ -25,6 +25,14 @@ class PostService {
                 throw new Error("Usuário não encontrado.");
             }
 
+            if (!title) {
+                throw new Error("O título é obrigatório.");
+            }
+
+            if (!content) {
+                throw new Error("O conteúdo é obrigatório.");
+            }
+
             const newPost = new PostModel({ title, content, author });
 
             return await newPost.save();
@@ -58,7 +66,7 @@ class PostService {
                 .populate('author', 'name email');
 
             if (!updatedPost) {
-                throw new Error("Post não encontrado, impossível atualizar.");
+                throw new Error("Post não encontrado.");
             }
 
             return updatedPost;

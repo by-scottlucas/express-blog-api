@@ -20,16 +20,19 @@ class UserService {
 
     async create(data) {
         try {
+            if (!data.email) {
+                throw new Error("O e-mail é obrigatório");
+            }
 
             if (!validator.isEmail(data.email)) {
                 throw new Error("E-mail inválido");
             }
 
             const existingUser = await UserModel.findOne({ email: data.email });
-            
+
             if (existingUser) {
                 throw new Error("Email já está em uso.");
-            }            
+            }
 
             const newUser = new UserModel(data);
             newUser.password = await bcrypt.hash(newUser.password, 10);
@@ -47,6 +50,7 @@ class UserService {
         }
     }
 
+
     async read(id) {
         try {
             const user = await UserModel.findById(id).populate('posts');
@@ -63,6 +67,17 @@ class UserService {
 
     async update(id, data) {
         try {
+            if (data.email) {
+                const existingUser = await UserModel.findOne({ email: data.email });
+                if (existingUser && existingUser._id.toString() !== id.toString()) {
+                    throw new Error("O e-mail já em uso");
+                }
+            }
+
+            if (data.name === '') {
+                throw new Error("O nome é obrigatório");
+            }
+
             if (data.password) {
                 data.password = await bcrypt.hash(data.password, 10);
             }
@@ -86,6 +101,7 @@ class UserService {
             throw new Error(error.message);
         }
     }
+
 
     async delete(id) {
         try {

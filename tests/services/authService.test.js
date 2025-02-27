@@ -1,9 +1,10 @@
 import jwt from 'jsonwebtoken';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import mongoose from 'mongoose';
-import UserCreateMock from '../__mocks__/userCreateMock.js';
+
 import AuthService from '../../src/services/authService.js';
 import UserService from '../../src/services/userService.js';
+import UserCreateMock from '../__mocks__/userCreateMock.js';
 
 describe('AuthService', () => {
     let mongoServer;
@@ -71,5 +72,45 @@ describe('AuthService', () => {
         await expect(authService.login(incorrectPasswordCredentials))
             .rejects
             .toThrow('Senha incorreta.');
+    });
+
+    test('Deve registrar um novo usuário', async () => {
+        const newUser = {
+            name: 'Novo Usuário',
+            email: 'novo@email.com',
+            password: 'novaSenha123',
+        };
+
+        const response = await authService.register(newUser);
+
+        expect(response).toHaveProperty('user');
+        expect(response.user).toHaveProperty('id');
+        expect(response.user.email).toBe(newUser.email);
+    });
+
+    test('Não deve permitir registrar um usuário com e-mail já cadastrado', async () => {
+        await expect(authService.register(validCredentials))
+            .rejects
+            .toThrow('E-mail já cadastrado.');
+    });
+
+    test('Deve gerar um token válido ao realizar login', async () => {
+        const response = await authService.login(validCredentials);
+        const decodedToken = jwt.verify(response.token, process.env.JWT_SECRET);
+        expect(decodedToken).toHaveProperty('id');
+        expect(decodedToken.id).toBe(testUser._id.toString());
+    });
+
+    test('Não deve permitir acessar um recurso protegido com um token inválido', async () => {
+        const invalidToken = 'token_invalido';
+        await expect(authService.verifyToken(invalidToken))
+            .rejects
+            .toThrow('Token inválido.');
+    });
+
+    test('Não deve permitir acessar um recurso protegido sem um token', async () => {
+        await expect(authService.verifyToken(null))
+            .rejects
+            .toThrow('Token não fornecido.');
     });
 });

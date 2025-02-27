@@ -1,9 +1,7 @@
-import AuthService from "../services/authService.js";
-import UserService from "../services/userService.js";
+import AuthService from '../services/authService.js';
 
 class AuthController {
     constructor() {
-        this.userService = new UserService();
         this.authService = new AuthService();
     }
 
@@ -16,7 +14,7 @@ class AuthController {
                 });
             }
 
-            const newUser = await this.userService.create(req.body);
+            const newUser = await this.authService.register(req.body);
             res.status(201).json(newUser);
         } catch (error) {
             res.status(500).json({
