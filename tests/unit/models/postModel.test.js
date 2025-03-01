@@ -1,10 +1,10 @@
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import mongoose from 'mongoose';
 
-import PostModel from '../../src/models/postModel.js';
-import UserModel from '../../src/models/userModel.js';
-import PostCreateMock from '../__mocks__/postCreateMock.js';
-import UserCreateMock from '../__mocks__/userCreateMock.js';
+import PostModel from '../../../src/models/postModel.js';
+import UserModel from '../../../src/models/userModel.js';
+import PostCreateMock from '../../__mocks__/postCreateMock.js';
+import UserCreateMock from '../../__mocks__/userCreateMock.js';
 
 describe("Post Model", () => {
     let mongoServer;

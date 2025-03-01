@@ -1,11 +1,11 @@
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import mongoose from 'mongoose';
 
-import CommentService from '../../src/services/commentService.js';
-import PostService from '../../src/services/postService.js';
-import UserService from '../../src/services/userService.js';
-import PostCreateMock from '../__mocks__/postCreateMock.js';
-import UserCreateMock from '../__mocks__/userCreateMock.js';
+import CommentService from '../../../src/services/commentService.js';
+import PostService from '../../../src/services/postService.js';
+import UserService from '../../../src/services/userService.js';
+import PostCreateMock from '../../__mocks__/postCreateMock.js';
+import UserCreateMock from '../../__mocks__/userCreateMock.js';
 
 describe('CommentService', () => {
     let mongoServer;

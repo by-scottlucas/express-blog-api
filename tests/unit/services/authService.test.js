@@ -2,9 +2,9 @@ import jwt from 'jsonwebtoken';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import mongoose from 'mongoose';
 
-import AuthService from '../../src/services/authService.js';
-import UserService from '../../src/services/userService.js';
-import UserCreateMock from '../__mocks__/userCreateMock.js';
+import AuthService from '../../../src/services/authService.js';
+import UserService from '../../../src/services/userService.js';
+import UserCreateMock from '../../__mocks__/userCreateMock.js';
 
 describe('AuthService', () => {
     let mongoServer;

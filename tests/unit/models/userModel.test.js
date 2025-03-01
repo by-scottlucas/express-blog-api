@@ -1,8 +1,8 @@
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import mongoose from 'mongoose';
 
-import UserModel from '../../src/models/userModel.js';
-import UserCreateMock from '../__mocks__/userCreateMock.js';
+import UserModel from '../../../src/models/userModel.js';
+import UserCreateMock from '../../__mocks__/userCreateMock.js';
 
 describe('User Model', () => {
     let mongoServer;

@@ -1,7 +1,5 @@
 # Express Blog API
 
-## Introdução
-
 Este projeto consiste em uma API desenvolvida em **Node.js** com o framework **Express** e banco de dados **MongoDB**. A API permite a criação e gerenciamento de um blog, com funcionalidades para CRUD de **usuários**, **posts** e **comentários**, além de autenticação via **JWT**.
 
 ## Funcionalidades

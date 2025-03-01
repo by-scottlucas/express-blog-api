@@ -1,8 +1,8 @@
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import mongoose from 'mongoose';
 
-import CommentModel from '../../src/models/commentModel.js';
-import CommentCreateMock from '../__mocks__/commentCreateMock.js';
+import CommentModel from '../../../src/models/commentModel.js';
+import CommentCreateMock from '../../__mocks__/commentCreateMock.js';
 
 describe("Comment Model", () => {
     let mongoServer;
