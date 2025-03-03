@@ -3,8 +3,8 @@ const PostCreateMock = {
     title: "Post 1",
     content: "Conteúdo do post 1",
     comments: [],
-    createdAt: new Date(),
-    updatedAt: new Date()
+    createdAt: "2025-03-01T22:11:08.260Z",
+    updatedAt: "2025-03-01T22:11:08.260Z",
 };
 
 export default PostCreateMock;

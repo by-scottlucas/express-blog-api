@@ -1,4 +1,5 @@
 import express from 'express';
+
 import PostController from '../controllers/postController.js';
 import authMiddleware from '../middlewares/authMiddleware.js';
 

@@ -3,6 +3,7 @@ import request from 'supertest';
 
 import routes from '../../../src/routes/routes.js';
 import UserService from '../../../src/services/userService.js';
+import { TokenMock } from '../../__mocks__/tokenMock.js';
 import UserCreateMock from '../../__mocks__/userCreateMock.js';
 import UserListMock from '../../__mocks__/userListMock.js';
 
@@ -24,6 +25,9 @@ const baseApiUrl = '/api/v1';
 routes(app);
 
 describe('UserController', () => {
+    let token = TokenMock;
+    let userId = "67bcd1dea2ee4dee4d8c8ddb"
+
     beforeEach(() => {
         jest.clearAllMocks();
     });
@@ -34,7 +38,8 @@ describe('UserController', () => {
 
         const response = await request(app)
             .get(`${baseApiUrl}/users/`)
-            .set('Authorization', `Bearer token`);
+            .set('Authorization', `Bearer ${token}`)
+
         expect(response.status).toBe(200);
         expect(response.body).toEqual(mockUsers);
     });
@@ -45,7 +50,9 @@ describe('UserController', () => {
 
         const response = await request(app)
             .post(`${baseApiUrl}/users/`)
+            .set('Authorization', `Bearer ${token}`)
             .send(UserCreateMock);
+
         expect(response.status).toBe(201);
         expect(response.body).toEqual(newUser);
     });
@@ -55,21 +62,27 @@ describe('UserController', () => {
         UserService.prototype.read.mockResolvedValue(mockUser);
 
         const response = await request(app)
-            .get(`${baseApiUrl}/users/1`)
-            .set('Authorization', 'Bearer token');
+            .get(`${baseApiUrl}/users/${userId}`)
+            .set('Authorization', `Bearer ${token}`)
+            
         expect(response.status).toBe(200);
         expect(response.body).toEqual(mockUser);
     });
 
     test('Deve atualizar um usuário', async () => {
-        const updatedUser = { id: 1, name: 'Lucas Silva', email: 'lucas@example.com' };
+        const updatedUser = {
+            id: '67bcd1dea2ee4dee4d8c8ddb',
+            name: 'Lucas Silva',
+            email: UserCreateMock.email
+        };
         UserService.prototype.read.mockResolvedValue(updatedUser);
         UserService.prototype.update.mockResolvedValue(updatedUser);
 
         const response = await request(app)
-            .put(`${baseApiUrl}/users/1`)
-            .set('Authorization', 'Bearer token')
+            .put(`${baseApiUrl}/users/${userId}`)
+            .set('Authorization', `Bearer ${token}`)
             .send({ name: 'Lucas Silva' });
+
         expect(response.status).toBe(200);
         expect(response.body).toEqual(updatedUser);
     });
@@ -79,14 +92,15 @@ describe('UserController', () => {
         UserService.prototype.delete.mockResolvedValue();
 
         const response = await request(app)
-            .delete(`${baseApiUrl}/users/1`)
-            .set('Authorization', 'Bearer token');
+            .delete(`${baseApiUrl}/users/${userId}`)
+            .set('Authorization', `Bearer ${token}`);
+
         expect(response.status).toBe(204);
     });
 
     test('Não deve listar usuários sem autorização', async () => {
         const response = await request(app)
-            .get(`${baseApiUrl}/users/`);
+            .get(`${baseApiUrl}/users/`)
 
         expect(response.status).toBe(401);
         expect(response.body).toEqual({});
@@ -96,9 +110,11 @@ describe('UserController', () => {
         const invalidUser = { ...UserCreateMock, email: '' };
         const response = await request(app)
             .post(`${baseApiUrl}/users/`)
+            .set('Authorization', `Bearer ${token}`)
             .send(invalidUser);
+
         expect(response.status).toBe(400);
-        expect(response.body.message).toBe('Preencha todos os campos.');
+        expect(response.body.message).toBe('O e-mail é obrigatório.');
     });
 
     test('Deve retornar 500 quando buscar um usuário com ID inexistente', async () => {
@@ -106,7 +122,7 @@ describe('UserController', () => {
 
         const response = await request(app)
             .get(`${baseApiUrl}/users/invalid_id`)
-            .set('Authorization', 'Bearer token');
+            .set('Authorization', `Bearer ${token}`);
 
         expect(response.status).toBe(500);
         expect(response.body.message).toBe('Usuário não encontrado');
@@ -118,8 +134,8 @@ describe('UserController', () => {
         UserService.prototype.update.mockRejectedValue(new Error('O nome é obrigatório'));
 
         const response = await request(app)
-            .put(`${baseApiUrl}/users/1`)
-            .set('Authorization', 'Bearer token')
+            .put(`${baseApiUrl}/users/${userId}`)
+            .set('Authorization', `Bearer ${token}`)
             .send(invalidUserData);
 
         expect(response.status).toBe(500);
@@ -131,6 +147,7 @@ describe('UserController', () => {
 
         const response = await request(app)
             .delete(`${baseApiUrl}/users/invalid_id`)
+            .set('Authorization', `Bearer ${token}`)
             .set('Authorization', 'Bearer token');
 
         expect(response.status).toBe(500);

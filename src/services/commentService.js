@@ -2,6 +2,7 @@ import CommentModel from '../models/commentModel.js';
 import PostModel from '../models/postModel.js';
 
 class CommentService {
+    
     async list(postId) {
         try {
             return await CommentModel.find({ post: postId })

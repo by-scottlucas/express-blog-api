@@ -27,7 +27,9 @@ describe("Post Model", () => {
     });
 
     test("Deve falhar ao criar um post sem título", async () => {
-        const mockSave = jest.fn().mockRejectedValue(new Error("O título é obrigatório"));
+        const mockSave = jest.fn().mockRejectedValue(
+            new Error("O título é obrigatório")
+        );
 
         PostModel.mockImplementation(() => ({
             save: mockSave,
@@ -37,6 +39,8 @@ describe("Post Model", () => {
             content: "Conteúdo do post",
         });
 
-        await expect(post.save()).rejects.toThrow("O título é obrigatório");
+        await expect(post.save())
+            .rejects
+            .toThrow("O título é obrigatório");
     });
 });

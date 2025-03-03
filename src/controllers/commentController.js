@@ -13,9 +13,7 @@ class CommentController {
             const { postId } = req.params;
 
             if (!postId) {
-                return res.status(400).json({
-                    message: "O ID do post é obrigatório."
-                });
+                return res.status(400).json({ message: "O ID do post é obrigatório." });
             }
 
             const comments = await this.commentService.list(postId);
@@ -28,25 +26,18 @@ class CommentController {
     async createComment(req, res) {
         try {
             const { userId, postId, content } = req.body;
-
             if (!userId || !postId || !content) {
-                return res.status(400).json({
-                    message: "Preencha todos os campos."
-                });
+                return res.status(400).json({ message: "Preencha todos os campos." });
             }
 
             const user = await UserModel.findById(userId);
             if (!user) {
-                return res.status(404).json({
-                    message: "Usuário não encontrado."
-                });
+                return res.status(404).json({ message: "Usuário não encontrado." });
             }
 
             const post = await PostModel.findById(postId);
             if (!post) {
-                return res.status(404).json({
-                    message: "Post não encontrado."
-                });
+                return res.status(404).json({ message: "Post não encontrado." });
             }
 
             const newComment = await this.commentService.create({
@@ -63,20 +54,15 @@ class CommentController {
             const comment = await this.commentService.read(req.params.id);
 
             if (!comment) {
-                return res.status(404).json({
-                    message: "Comentário não encontrado"
-                });
+                return res.status(404).json({ message: "Comentário não encontrado" });
             }
 
             await this.commentService.delete(req.params.id);
             res.status(204).json({ message: "Comentário excluído com sucesso!" });
         } catch (error) {
-            res.status(500).json({
-                message: error.message
-            });
+            res.status(500).json({ message: error.message });
         }
     }
-
 }
 
 export default CommentController;

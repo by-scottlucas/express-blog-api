@@ -1,8 +1,8 @@
 import PostModel from '../models/postModel.js';
 import UserModel from '../models/userModel.js';
-import CommentModel from '../models/commentModel.js';
 
 class PostService {
+
     async list() {
         try {
             return await PostModel.find()
@@ -62,8 +62,9 @@ class PostService {
 
     async update(id, data) {
         try {
-            const updatedPost = await PostModel.findByIdAndUpdate(id, data, { new: true })
-                .populate('author', 'name email');
+            const updatedPost = await PostModel.findByIdAndUpdate(
+                id, data, { new: true }
+            ).populate('author', 'name email');
 
             if (!updatedPost) {
                 throw new Error("Post não encontrado.");

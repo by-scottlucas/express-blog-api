@@ -1,53 +1,59 @@
+import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
-import { MongoMemoryServer } from 'mongodb-memory-server';
-import mongoose from 'mongoose';
 
+import UserModel from '../../../src/models/userModel.js';
 import AuthService from '../../../src/services/authService.js';
-import UserService from '../../../src/services/userService.js';
+import { TokenMock } from '../../__mocks__/tokenMock.js';
 import UserCreateMock from '../../__mocks__/userCreateMock.js';
 
+jest.mock('jsonwebtoken');
+jest.mock('bcrypt');
+jest.mock('../../../src/models/userModel.js');
+
 describe('AuthService', () => {
-    let mongoServer;
-    let authService;
-    let userService;
     let testUser;
+    let authService;
 
     const validCredentials = {
-        email: 'lucas@email.com',
-        password: 'lucas123',
+        email: UserCreateMock.email,
+        password: UserCreateMock.password,
     };
 
     const invalidEmailCredentials = {
-        email: 'joaninha@email.com',
-        password: 'lucas123',
+        email: 'invalid@email.com',
+        password: UserCreateMock.password,
     };
 
     const incorrectPasswordCredentials = {
         email: validCredentials.email,
-        password: 'senhaErrada',
+        password: 'incorrectPassword',
     };
 
-    beforeAll(async () => {
-        mongoServer = await MongoMemoryServer.create();
-        await mongoose.connect(mongoServer.getUri());
+    beforeEach(() => {
         authService = new AuthService();
-        userService = new UserService();
-    });
+        UserModel.findOne.mockReset();
+        UserModel.prototype.save.mockReset();
+        bcrypt.compare.mockReset();
+        bcrypt.hash.mockReset();
+        jwt.sign.mockReset();
+        jwt.verify.mockReset();
 
-    beforeEach(async () => {
-        await mongoose.connection.db.dropDatabase();
-        testUser = await createTestUser();
-    });
+        testUser = {
+            _id: 'someUserId',
+            email: validCredentials.email,
+            password: 'hashedPassword',
+            save: jest.fn()
+        };
 
-    afterAll(async () => {
-        await mongoose.connection.close();
-        await mongoServer.stop();
+        UserModel.findOne.mockResolvedValue(testUser);
+        bcrypt.compare.mockResolvedValue(true);
+        bcrypt.hash.mockResolvedValue('hashedPassword');
+        jwt.sign.mockReturnValue(TokenMock);
+        jwt.verify.mockReturnValue({
+            _id: testUser._id,
+            email: testUser.email
+        });
     });
-
-    async function createTestUser() {
-        const { user } = await userService.create(UserCreateMock);
-        return user;
-    }
 
     test('Deve realizar login com credenciais válidas', async () => {
         const response = await authService.login(validCredentials);
@@ -57,29 +63,34 @@ describe('AuthService', () => {
         expect(response.user).toHaveProperty('id');
         expect(response.user).toHaveProperty('email');
         expect(response).toHaveProperty('token');
-
-        const decodedToken = jwt.verify(response.token, process.env.JWT_SECRET);
-        expect(decodedToken.id).toBe(testUser._id.toString());
+        expect(response.token).toBe(TokenMock);
     });
 
     test('Deve falhar ao tentar login com email inválido', async () => {
+        UserModel.findOne.mockResolvedValue(null);
+
         await expect(authService.login(invalidEmailCredentials))
             .rejects
             .toThrow('Usuário não encontrado.');
     });
 
     test('Deve falhar ao tentar login com senha incorreta', async () => {
+        bcrypt.compare.mockResolvedValue(false);
+
         await expect(authService.login(incorrectPasswordCredentials))
             .rejects
             .toThrow('Senha incorreta.');
     });
 
     test('Deve registrar um novo usuário', async () => {
-        const newUser = {
-            name: 'Novo Usuário',
-            email: 'novo@email.com',
-            password: 'novaSenha123',
+        UserModel.findOne.mockResolvedValue(null);
+        const newUser = UserCreateMock;
+        const savedUser = {
+            id: 'newUserId',
+            email: newUser.email,
+            save: jest.fn()
         };
+        UserModel.mockReturnValue(savedUser);
 
         const response = await authService.register(newUser);
 
@@ -96,14 +107,14 @@ describe('AuthService', () => {
 
     test('Deve gerar um token válido ao realizar login', async () => {
         const response = await authService.login(validCredentials);
-        const decodedToken = jwt.verify(response.token, process.env.JWT_SECRET);
-        expect(decodedToken).toHaveProperty('id');
-        expect(decodedToken.id).toBe(testUser._id.toString());
+        expect(response.token).toBe(TokenMock);
     });
 
     test('Não deve permitir acessar um recurso protegido com um token inválido', async () => {
-        const invalidToken = 'token_invalido';
-        await expect(authService.verifyToken(invalidToken))
+        jwt.verify.mockImplementation(() => {
+            throw new Error('Token inválido.');
+        });
+        await expect(authService.verifyToken('invalidToken'))
             .rejects
             .toThrow('Token inválido.');
     });

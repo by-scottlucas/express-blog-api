@@ -10,45 +10,42 @@ class UserController {
             const users = await this.userService.list();
             res.status(200).json(users);
         } catch (error) {
-            res.status(500).json({
-                message: error.message
-            });
+            res.status(500).json({ message: error.message });
         }
     }
 
     async createUser(req, res) {
         try {
             const { name, email, password } = req.body;
-            if (!name || !email || !password) {
-                return res.status(400).json({
-                    message: "Preencha todos os campos."
-                });
+            if (!name) {
+                return res.status(400).json({ message: "O nome é obrigatório." });
+            }
+
+            if (!email) {
+                return res.status(400).json({ message: "O e-mail é obrigatório." });
+            }
+
+            if (!password) {
+                return res.status(400).json({ message: "A senha é obrigatória." });
             }
 
             const newUser = await this.userService.create(req.body);
             res.status(201).json(newUser);
         } catch (error) {
-            res.status(500).json({
-                message: error.message
-            });
+            res.status(500).json({ message: error.message });
         }
     }
 
     async getUser(req, res) {
         try {
             const user = await this.userService.read(req.params.id);
-
             if (!user) {
-                return res.status(404).json({
-                    message: "Usuário não encontrado"
-                });
+                return res.status(404).json({ message: "Usuário não encontrado" });
             }
 
             res.status(200).json(user);
         } catch (error) {
-            res.status(500).json({
-                message: error.message
-            });
+            res.status(500).json({ message: error.message });
         }
     }
 
@@ -57,9 +54,7 @@ class UserController {
             const user = await this.userService.read(req.params.id);
 
             if (!user) {
-                return res.status(404).json({
-                    message: "Usuário não encontrado"
-                });
+                return res.status(404).json({ message: "Usuário não encontrado" });
             }
 
             const updatedFields = {};
@@ -74,9 +69,7 @@ class UserController {
 
             res.status(200).json(updatedUser);
         } catch (error) {
-            res.status(500).json({
-                message: error.message
-            });
+            res.status(500).json({ message: error.message });
         }
     }
 
@@ -85,17 +78,13 @@ class UserController {
             const user = await this.userService.read(req.params.id);
 
             if (!user) {
-                return res.status(404).json({
-                    message: "Usuário não encontrado"
-                });
+                return res.status(404).json({ message: "Usuário não encontrado" });
             }
 
             await this.userService.delete(req.params.id);
             res.status(204).json({ message: "Usuário excluído com sucesso!" });
         } catch (error) {
-            res.status(500).json({
-                message: error.message
-            });
+            res.status(500).json({ message: error.message });
         }
     }
 }

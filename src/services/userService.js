@@ -9,6 +9,7 @@ import UserModel from '../models/userModel.js';
 dotenv.config();
 
 class UserService {
+
     async list() {
         try {
             const users = await UserModel.find();
@@ -20,36 +21,40 @@ class UserService {
 
     async create(data) {
         try {
+            if (!data.name) {
+                throw new Error("O nome é obrigatório");
+            }
+    
             if (!data.email) {
                 throw new Error("O e-mail é obrigatório");
             }
-
+    
             if (!validator.isEmail(data.email)) {
                 throw new Error("E-mail inválido");
             }
-
+    
             const existingUser = await UserModel.findOne({ email: data.email });
-
+    
             if (existingUser) {
                 throw new Error("Email já está em uso.");
             }
-
+    
             const newUser = new UserModel(data);
             newUser.password = await bcrypt.hash(newUser.password, 10);
             await newUser.save();
-
+    
             const token = await jwt.sign(
                 { id: newUser._id },
                 process.env.JWT_SECRET,
                 { expiresIn: '1h' }
             );
-
+    
             return { user: newUser, token };
         } catch (error) {
             throw new Error(error.message);
         }
     }
-
+    
 
     async read(id) {
         try {
@@ -69,6 +74,7 @@ class UserService {
         try {
             if (data.email) {
                 const existingUser = await UserModel.findOne({ email: data.email });
+                
                 if (existingUser && existingUser._id.toString() !== id.toString()) {
                     throw new Error("O e-mail já em uso");
                 }

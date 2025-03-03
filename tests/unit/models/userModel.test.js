@@ -10,7 +10,10 @@ describe('User Model (Mockado)', () => {
 
     test('Deve criar um usuário válido', async () => {
         UserModel.mockImplementation(() => ({
-            save: jest.fn().mockResolvedValue({ ...UserCreateMock, _id: 'fakeId' }),
+            save: jest.fn().mockResolvedValue({
+                ...UserCreateMock,
+                _id: 'fakeId'
+            }),
         }));
 
         const user = new UserModel(UserCreateMock);
@@ -27,7 +30,10 @@ describe('User Model (Mockado)', () => {
             save: jest.fn().mockRejectedValue(new Error('O nome é obrigatório')),
         }));
 
-        const user = new UserModel({ email: 'lucas@email.com', password: '123456' });
+        const user = new UserModel({
+            email: UserCreateMock.email,
+            password: UserCreateMock.password
+        });
 
         await expect(user.save()).rejects.toThrow('O nome é obrigatório');
     });
@@ -37,7 +43,11 @@ describe('User Model (Mockado)', () => {
             save: jest.fn().mockRejectedValue(new Error('E-mail inválido')),
         }));
 
-        const user = new UserModel({ name: 'Lucas', email: 'invalid-email', password: '123456' });
+        const user = new UserModel({
+            name: UserCreateMock.name,
+            email: 'invalid-email',
+            password: UserCreateMock.password
+        });
 
         await expect(user.save()).rejects.toThrow('E-mail inválido');
     });

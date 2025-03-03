@@ -4,7 +4,7 @@ const commentSchema = new mongoose.Schema({
     author: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
-        required: [true, 'O author é obrigatório']
+        required: [true, 'O autor é obrigatório']
     },
     post: {
         type: mongoose.Schema.Types.ObjectId,

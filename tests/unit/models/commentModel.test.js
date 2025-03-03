@@ -1,5 +1,5 @@
-import CommentModel from "../../../src/models/commentModel.js";
-import CommentCreateMock from "../../__mocks__/commentCreateMock.js";
+import CommentModel from '../../../src/models/commentModel.js';
+import CommentCreateMock from '../../__mocks__/commentCreateMock.js';
 
 jest.mock("../../../src/models/commentModel.js");
 
@@ -26,7 +26,9 @@ describe("Comment Model", () => {
     });
 
     test("Deve falhar ao criar um comentário sem conteúdo", async () => {
-        const mockSave = jest.fn().mockRejectedValue(new Error("O comentário não pode ser publicado sem conteúdo"));
+        const mockSave = jest.fn().mockRejectedValue(
+            new Error("O comentário não pode ser publicado sem conteúdo")
+        );
 
         CommentModel.mockImplementation(() => ({
             save: mockSave,
@@ -37,6 +39,8 @@ describe("Comment Model", () => {
             post: CommentCreateMock.post,
         });
 
-        await expect(comment.save()).rejects.toThrow("O comentário não pode ser publicado sem conteúdo");
+        await expect(comment.save())
+            .rejects
+            .toThrow("O comentário não pode ser publicado sem conteúdo");
     });
 });

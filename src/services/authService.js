@@ -1,6 +1,7 @@
 import bcrypt from 'bcrypt';
 import dotenv from 'dotenv';
 import jwt from 'jsonwebtoken';
+
 import UserModel from '../models/userModel.js';
 
 dotenv.config();
@@ -74,7 +75,6 @@ class AuthService {
             throw new Error("Token inválido.");
         }
     }
-
 }
 
 export default AuthService;

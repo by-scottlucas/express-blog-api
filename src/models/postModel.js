@@ -8,7 +8,7 @@ const postSchema = new mongoose.Schema({
     author: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
-        required: [true, "O author é obrigatório"]
+        required: [true, "O autor é obrigatório"]
     },
     content: {
         type: String,
