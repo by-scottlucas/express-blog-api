@@ -8,6 +8,7 @@ Este projeto consiste em uma API desenvolvida em **Node.js** com o framework **E
 
 - **Registro de Usuário**: Permite que novos usuários se registrem.
 - **Login**: Realiza o login de usuários e gera um token JWT.
+- **Logout**: Realiza o logout no sistema.
 
 ### Usuários
 
@@ -42,7 +43,12 @@ Este projeto consiste em uma API desenvolvida em **Node.js** com o framework **E
 - **src/services**: Contém a lógica de negócios da API.
 - **src/routes**: Define as rotas da API e seus respectivos manipuladores.
 - **src/middlewares**: Inclui o middleware de autenticação JWT.
-- **src/tests**: Contém os testes unitários para os models, services, controllers e routes.
+- **tests**: Contém os testes da aplicação.
+  - **unit**: Contém os testes unitários.
+    - **models**: Testes para a camada de modelos (ex.: usuários, posts, comentários).
+    - **services**: Testes para a camada de serviços (ex.: lógica de negócios).
+  - **integration**: Contém os testes de integração.
+    - **controllers**: Testes para os controladores (ex.: operações de CRUD e autenticação).
 - **app.js**: Arquivo principal que configura o servidor e inicializa a API.
 
 ## Como Rodar o Projeto
@@ -112,6 +118,7 @@ A API estará disponível em **[http://localhost:3000](http://localhost:3000/)**
 
 - **POST** `/api/v1/auth/register` - Registrar usuário
 - **POST** `/api/v1/auth/login` - Login de usuário
+- **POST** `/api/v1/auth/logout` - Logout no sistema
 
 ### Middleware de Autenticação
 
@@ -129,13 +136,16 @@ Authorization: Bearer <token>
 - **JWT**: Para autenticação de usuários.
 - **Mongoose**: Biblioteca para modelar e interagir com o MongoDB.
 - **dotenv**: Para carregar variáveis de ambiente.
+- **Jest**: Framework de testes utilizado para garantir a qualidade do código.
+- **Supertest**: Biblioteca para realizar testes de integração em APIs.
+
 
 ## Testes
 
-Os testes de unidades para os **models**, **services**, **controllers** e **routes** estão localizados na pasta **src/tests**. Para rodar os testes, execute:
+Os testes estão localizados na branch dev, dentro da pasta tests, que está organizada em duas subpastas: unit (para testes unitários) e integration (para testes de integração). Para rodar os testes, execute:
 
 ```bash
-npm test
+npm run test
 ```
 
 ## Autor
